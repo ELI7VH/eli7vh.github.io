@@ -12,7 +12,14 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div>this is some other shit</div>
+        <div>This is my website</div>
+        <div>Click this button to Log {loggedIn ? "out" : "in"}!</div>
+        <div>
+          <button onClick={handleClick}>Log {loggedIn ? "Out" : "In"}!</button>
+        </div>
+        <div style={{ color: loggedIn ? "#0f0" : "#f00" }}>
+          Logged in? {loggedIn ? "Yaaa!" : "No way!"}
+        </div>
       </header>
     </div>
   );
