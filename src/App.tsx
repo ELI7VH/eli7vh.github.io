@@ -1,5 +1,7 @@
+import { Box, Button, Grid, Heading, Tag, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import "./App.css";
+import { Tweet } from "./components/Tweet";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -10,18 +12,39 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>This is my website</div>
-        <div>Click this button to Log {loggedIn ? "out" : "in"}!</div>
-        <div>
-          <button onClick={handleClick}>Log {loggedIn ? "Out" : "In"}!</button>
-        </div>
-        <div style={{ color: loggedIn ? "#0f0" : "#f00" }}>
-          Logged in? {loggedIn ? "Yaaa!" : "No way!"}
-        </div>
-      </header>
-    </div>
+    <Grid gridTemplateRows="1fr 2fr" height="100vh">
+      <Box
+        bgColor="gray.700"
+        color="white"
+        display="flex"
+        flexDir="row"
+        justifyContent="space-between"
+        alignItems="end"
+        padding="1rem"
+      >
+        <Heading>This is my website</Heading>
+        <Text>Click this button to Log {loggedIn ? "out" : "in"}!</Text>
+        <Button color="gray.700" onClick={handleClick}>
+          Log {loggedIn ? "Out" : "In"}!
+        </Button>
+        <Tag transition="0.5s all" bgColor={loggedIn ? "green.200" : "red.200"}>
+          Logged in
+        </Tag>
+      </Box>
+      <Box padding="1rem">
+        <Heading>Home Page</Heading>
+        <Tweet>some text</Tweet>
+        <Tweet>news article</Tweet>
+        <Tweet>some artwork</Tweet>
+        <Tweet>
+          <Box>
+            <Heading>Cool Tweet</Heading>
+            <Button>Click Me!</Button>
+          </Box>
+        </Tweet>
+        <Tweet>I am the best developer</Tweet>
+      </Box>
+    </Grid>
   );
 }
 
