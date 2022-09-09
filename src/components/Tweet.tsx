@@ -9,7 +9,7 @@ export const Tweet = (props: Props) => {
   console.log("tweet props", props);
 
   return (
-    <Box background="gray.200" margin="1rem" padding="1rem" borderRadius="1rem">
+    <Box background="blue.700" margin="1rem" padding="1rem" borderRadius="1rem">
       {props.children}
     </Box>
   );
