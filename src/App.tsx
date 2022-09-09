@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./App.css";
 import { Tweet } from "./components/Tweet";
 
-function App() {
+export const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleClick = () => {
@@ -25,7 +25,7 @@ function App() {
         <Heading>This is my website</Heading>
         <Text>Click this button to Log {loggedIn ? "out" : "in"}!</Text>
         <Button color="gray.700" onClick={handleClick}>
-          Log {loggedIn ? "Out" : "In"}!
+          ----Log {loggedIn ? "Out" : "In"}!
         </Button>
         <Tag transition="0.5s all" bgColor={loggedIn ? "green.200" : "red.200"}>
           Logged in
@@ -46,6 +46,6 @@ function App() {
       </Box>
     </Grid>
   );
-}
+};
 
 export default App;
