@@ -1,11 +1,216 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ART</title>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
-    <script src="index.js"></script>
+    <title>Elijah Lucian // Developer</title>
+    <style>
+      :root {
+        --bg: #0d0d0d;
+        --text: #e6e6e6;
+        --muted: #808080;
+        --accent: #ffb703; /* A warm, creative accent color */
+        --font-main: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        --font-mono: "Courier New", Courier, monospace;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: var(--font-main);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+      }
+
+      header {
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+
+      .subtitle {
+        font-family: var(--font-mono);
+        color: var(--accent);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        display: block;
+        margin-top: 0.5rem;
+      }
+
+      .declaration {
+        font-size: 1.5rem;
+        font-weight: 300;
+        line-height: 1.4;
+        margin-bottom: 3rem;
+      }
+
+      .highlight {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      section {
+        margin-bottom: 4rem;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--muted);
+        padding-left: 1rem;
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .project-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 600px) {
+        .project-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .project-item {
+        background: #1a1a1a;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #333;
+      }
+
+      .project-item h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+      }
+
+      .project-item p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .footer-nav {
+        margin-top: 5rem;
+        padding-top: 2rem;
+        border-top: 1px solid #333;
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Elijah Lucian</h1>
+        <span class="subtitle">Builder / Creator / Architect</span>
+      </header>
+
+      <div class="declaration">
+        "My core passion is enabling creators to catch the wave of inspiration
+        and bring it out in its truest form. I build tools for creatives.
+        <span class="highlight"
+          >I will never leave a codebase abandoned as long as I am
+          breathing.</span
+        >"
+      </div>
+
+      <section>
+        <h2>The Developer Promise</h2>
+        <p>
+          Trust in the tools you use to express yourself is paramount. For over
+          a decade, spanning audio production, voice acting, generative art, and
+          web development, I've watched brilliant ideas die because the software
+          in the way was too cumbersome, too fleeting, or abandoned by its
+          creators.
+        </p>
+        <p>
+          I build to solve that. I build because I am a creative first. I know
+          exactly what it feels like to lose the spark while wrestling with a
+          broken interface. Every line of code I write is dedicated to removing
+          the friction between your intent and your output.
+        </p>
+      </section>
+
+      <section>
+        <h2>The Ecosystem</h2>
+        <p>
+          I maintain a growing framework of open-source utilities and creative
+          interfaces designed for longevity. These tools aren't side projects;
+          they are my calling.
+        </p>
+
+        <ul class="project-list">
+          <li class="project-item">
+            <h3>Dank Inc. Libraries</h3>
+            <p>
+              Open-source, lightweight Typescript creative coding packages
+              (Banger, Sketchy, Lewps, Super-Mouse).
+            </p>
+          </li>
+          <li class="project-item">
+            <h3>Generative Art Systems</h3>
+            <p>
+              Frameworks marrying raw canvas, p5.js, and Three.js for visual
+              exploration without bloat.
+            </p>
+          </li>
+          <li class="project-item">
+            <h3>Audio & Music Tooling</h3>
+            <p>
+              From Reaper JSFX plugins to browser-based synthesized noise
+              engines designed for performers.
+            </p>
+          </li>
+          <li class="project-item">
+            <h3>The Creative Journal</h3>
+            <p>
+              Dedicated tracking and stage-building software designed explicitly
+              to support an artist's lifecycle.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <div class="footer-nav">
+        <a href="https://github.com/ELI7VH" target="_blank"
+          >github.com/ELI7VH</a
+        >
+        <a href="https://elijahlucian.ca" target="_blank">elijahlucian.ca</a>
+      </div>
+    </div>
+  </body>
 </html>
