@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>triangulation</title>
+<style>
+  html, body { margin: 0; height: 100%; background: hsl(20, 30%, 20%); overflow: hidden; }
+  canvas { display: block; cursor: crosshair; touch-action: none; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "delaunator": "https://cdn.jsdelivr.net/npm/delaunator@5.0.1/+esm",
+  "simplex-noise": "https://cdn.jsdelivr.net/npm/simplex-noise@4.0.3/+esm"
+} }
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import * as THREE from 'three'
+import Delaunator from 'delaunator'
+import { createNoise2D } from 'simplex-noise'
+
+// triangulation (2020), seeded so every load is the same field.
+// left / right turns the lights round the scene; their height is the sketch's.
+const q = new URLSearchParams(location.search)
+const SEED = Number(q.get('seed') ?? 2020)
+const W = Number(q.get('w') ?? 0), H = Number(q.get('h') ?? 0)
+
+const mulberry32 = (a) => () => {
+  a |= 0; a = (a + 0x6D2B79F5) | 0
+  let t = Math.imul(a ^ (a >>> 15), 1 | a)
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+}
+const rnd = mulberry32(SEED)
+const noise2D = createNoise2D(mulberry32(SEED ^ 0x9e3779b9))
+const spread = (r) => (rnd() - 0.5) * r
+
+THREE.ColorManagement.enabled = false
+const canvas = document.getElementById('c')
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace
+renderer.useLegacyLights = true
+const bg = new THREE.Color('hsl(20, 30%, 20%)')
+renderer.setClearColor(bg, 1)
+
+const scene = new THREE.Scene()
+scene.fog = new THREE.FogExp2(bg, 0.008)
+
+const camera = new THREE.PerspectiveCamera(5, 1, 0.01, 500)
+camera.position.set(0, 30, 95)
+camera.lookAt(2, -5, 20)
+
+const TOTAL = 50000, SIZEX = 150, SIZEZ = 100, SX = 6, SZ = 12
+const pos = new Float32Array(TOTAL * 3)
+const flat = new Float64Array(TOTAL * 2)
+for (let i = 0; i < TOTAL; i++) {
+  const x = spread(SIZEX), z = spread(SIZEZ)
+  const u = (x / SIZEX) * SX, w = (z / SIZEZ) * SZ
+  const y = z > SIZEZ - 20 ? 0 : Math.sin(w * 1.5 + u * 3 + noise2D(u * 2, w * 2)) * 2
+  pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z
+  flat[i * 2] = x; flat[i * 2 + 1] = z
+}
+const geometry = new THREE.BufferGeometry()
+geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+geometry.setIndex(new THREE.BufferAttribute(new Delaunator(flat).triangles, 1))
+geometry.computeVertexNormals()
+const material = new THREE.MeshPhysicalMaterial({
+  color: '#fff', side: THREE.DoubleSide, flatShading: true,
+  clearcoat: 0.6, metalness: 0.5, clearcoatRoughness: 0.35,
+})
+scene.add(new THREE.Mesh(geometry, material))
+
+const lights = [
+  { light: new THREE.DirectionalLight(new THREE.Color('hsl(190, 50%, 50%)'), 0.7), base: new THREE.Vector3(2, 2, 5).multiplyScalar(1.5) },
+  { light: new THREE.DirectionalLight(new THREE.Color('hsl(20, 80%, 50%)'), 1.9), base: new THREE.Vector3(-1, 2, -3).multiplyScalar(1.5) },
+]
+for (const l of lights) scene.add(l.light)
+
+const UP = new THREE.Vector3(0, 1, 0)
+const placeLights = (theta) => {
+  for (const { light, base } of lights) light.position.copy(base).applyAxisAngle(UP, theta)
+}
+
+const resize = () => {
+  const w = W || innerWidth, h = H || innerHeight
+  renderer.setPixelRatio(W ? 1 : Math.min(devicePixelRatio, 2))
+  renderer.setSize(w, h, true)
+  camera.aspect = w / h
+  camera.updateProjectionMatrix()
+}
+addEventListener('resize', resize)
+resize()
+
+let theta = 0, want = 0, drift = true, manual = false
+const aim = (cx) => { want = (cx / innerWidth - 0.5) * Math.PI * 2; drift = false }
+addEventListener('pointermove', (e) => aim(e.clientX))
+addEventListener('pointerleave', () => { drift = true; want = theta })
+addEventListener('touchmove', (e) => aim(e.touches[0].clientX), { passive: true })
+
+let last = performance.now()
+const frame = (now) => {
+  if (manual) return
+  const dt = Math.min(0.1, (now - last) / 1000); last = now
+  if (drift) want += dt * 0.25
+  theta += (want - theta) * Math.min(1, dt * 6)
+  placeLights(theta)
+  renderer.render(scene, camera)
+  requestAnimationFrame(frame)
+}
+requestAnimationFrame(frame)
+
+// for the rendered loop: frame i of n is the lights a full turn round, seamlessly.
+window.renderFrame = (i, n) => {
+  manual = true
+  placeLights((i / n) * Math.PI * 2)
+  renderer.render(scene, camera)
+  return true
+}
+window.ready = true
+</script>
+</body>
+</html>
