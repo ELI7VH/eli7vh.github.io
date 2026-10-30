@@ -95,19 +95,39 @@ const resize = () => {
 addEventListener('resize', resize)
 resize()
 
+// mouse y is the view angle, as the sketch's last version has it: the camera
+// rides an arc over the point it looks at, 22 degrees up at the bottom of the
+// pane, past straight down to 155 at the top. Its up follows the arc.
+const LOOK = new THREE.Vector3(2, -5, 20)
+const REACH = 83, LOW = 22 * Math.PI / 180, HIGH = 155 * Math.PI / 180
+// both ease long: the gap closes by 1/e every TAU seconds
+const TAU = { light: 1.1, view: 1.4 }
+let angle = Math.atan2(30 - LOOK.y, 95 - LOOK.z), wantAngle = angle
+const placeCamera = (a) => {
+  camera.position.set(0, LOOK.y + Math.sin(a) * REACH, LOOK.z + Math.cos(a) * REACH)
+  camera.up.set(0, Math.cos(a), -Math.sin(a))
+  camera.lookAt(LOOK)
+}
+
 let theta = 0, want = 0, drift = true, manual = false
-const aim = (cx) => { want = (cx / innerWidth - 0.5) * Math.PI * 2; drift = false }
-addEventListener('pointermove', (e) => aim(e.clientX))
+const aim = (cx, cy) => {
+  want = (cx / innerWidth - 0.5) * Math.PI * 2
+  wantAngle = LOW + (1 - cy / innerHeight) * (HIGH - LOW)
+  drift = false
+}
+addEventListener('pointermove', (e) => aim(e.clientX, e.clientY))
 addEventListener('pointerleave', () => { drift = true; want = theta })
-addEventListener('touchmove', (e) => aim(e.touches[0].clientX), { passive: true })
+addEventListener('touchmove', (e) => aim(e.touches[0].clientX, e.touches[0].clientY), { passive: true })
 
 let last = performance.now()
 const frame = (now) => {
   if (manual) return
   const dt = Math.min(0.1, (now - last) / 1000); last = now
   if (drift) want += dt * 0.25
-  theta += (want - theta) * Math.min(1, dt * 6)
+  theta += (want - theta) * (1 - Math.exp(-dt / TAU.light))
+  angle += (wantAngle - angle) * (1 - Math.exp(-dt / TAU.view))
   placeLights(theta)
+  placeCamera(angle)
   renderer.render(scene, camera)
   requestAnimationFrame(frame)
 }
